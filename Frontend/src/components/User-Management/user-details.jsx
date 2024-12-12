@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,12 +68,10 @@ export default function UserDetails() {
             {/* Add Buttons  */}
             <div className="flex gap-2  ">
               <Button>All Users</Button>
-              <Button
-                variant="outline"
-                onClick={() => (window.location.href = "/users/add")}
-              >
-                Add User
-              </Button>
+
+              <Link to="/users/add">
+                <Button variant="outline">Add User</Button>
+              </Link>
             </div>
           </div>
 

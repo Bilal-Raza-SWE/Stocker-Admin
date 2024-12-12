@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { Search, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Search, MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -11,41 +12,41 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 // Sample data - replace with your actual data source
 const inventoryItems = [
   {
     id: 1,
-    name: 'Monitor',
+    name: "Monitor",
     quantity: 25,
     price: 249.99,
-    category: 'Electronics',
-    supplier: 'ScreenTech Corp.',
-    lastRestocked: '2024-11-30'
+    category: "Electronics",
+    supplier: "ScreenTech Corp.",
+    lastRestocked: "2024-11-30",
   },
   // Add more items as needed
-]
+];
 
 export default function InventoryList() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const filteredItems = inventoryItems.filter(item =>
-    Object.values(item).some(value =>
+  const filteredItems = inventoryItems.filter((item) =>
+    Object.values(item).some((value) =>
       value.toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
-  )
+  );
 
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage)
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
@@ -67,12 +68,12 @@ export default function InventoryList() {
               />
             </div>
             <Button>Show Inventory</Button>
-            <Button variant="outline" onClick={() => window.location.href='/inventory/add'}>
-              Add Category
-            </Button>
-            <Button variant="outline" onClick={() => window.location.href='/inventory/location/add'}>
-              Add Location
-            </Button>
+            <Link to="/inventory/add">
+              <Button variant="outline">Add Category</Button>
+            </Link>
+            <Link to="/inventory/location/add">
+              <Button variant="outline">Add Location</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -101,7 +102,9 @@ export default function InventoryList() {
                 <TableCell>${item.price.toFixed(2)}</TableCell>
                 <TableCell>{item.category}</TableCell>
                 <TableCell>{item.supplier}</TableCell>
-                <TableCell>{new Date(item.lastRestocked).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {new Date(item.lastRestocked).toLocaleDateString()}
+                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -110,12 +113,14 @@ export default function InventoryList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => console.log('Update', item.id)}>
+                      <DropdownMenuItem
+                        onClick={() => console.log("Update", item.id)}
+                      >
                         Update
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-600"
-                        onClick={() => console.log('Delete', item.id)}
+                        onClick={() => console.log("Delete", item.id)}
                       >
                         Delete
                       </DropdownMenuItem>
@@ -132,14 +137,14 @@ export default function InventoryList() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
           <div className="flex items-center space-x-1">
-            {pages.map(page => (
+            {pages.map((page) => (
               <Button
                 key={page}
                 variant={currentPage === page ? "default" : "outline"}
@@ -153,7 +158,9 @@ export default function InventoryList() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
           >
             Next
@@ -162,6 +169,5 @@ export default function InventoryList() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

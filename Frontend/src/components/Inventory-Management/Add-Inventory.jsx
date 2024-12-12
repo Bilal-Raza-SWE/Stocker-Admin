@@ -37,16 +37,14 @@ export default function AddInventory() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Inventory</h1>
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              onClick={() => (window.location.href = "/inventory")}
-            >
-              Show Inventory
-            </Button>
+            <Link to="/inventory">
+              <Button variant="outline">Show Inventory</Button>
+            </Link>
+
             <Button>Add Category</Button>
+
             <Link to="/inventory/location/add">
-              
-              Add Location
+              <Button variant="outline">Add Location</Button>
             </Link>
           </div>
         </div>

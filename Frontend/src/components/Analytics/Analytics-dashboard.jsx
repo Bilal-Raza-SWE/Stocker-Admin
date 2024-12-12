@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -57,26 +58,19 @@ export default function AnalyticsDashboard() {
     <div className="p-6 space-y-2">
       <div className="mb-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-sm text-muted-foreground mb-2">Analytics / Show analytics</h1>
+          <h1 className="text-sm text-muted-foreground mb-2">
+            Analytics / Show analytics
+          </h1>
           <div className="flex items-center gap-4">
-            
             <Button>Show Analytics</Button>
-            <Button variant="outline" onClick={() => window.location.href='/analytics/reports'}>
-              Generate Reports
-            </Button>
+            <Link to="/analytics/reports">
+              <Button variant="outline">Generate Reports</Button>
+            </Link>
           </div>
         </div>
       </div>
 
-
-
-
       <div className="flex justify-between items-center">
-
-
-
-
-
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Show Analytics</h1>
         </div>

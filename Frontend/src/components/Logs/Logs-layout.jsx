@@ -1,8 +1,9 @@
 "use client"
 
-import { useNavigate, useLocation } from 'react-router-dom'
+import {useLocation } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 LogsLayout.propTypes = {
   children: PropTypes.node,
@@ -10,7 +11,6 @@ LogsLayout.propTypes = {
 }
 
 export default function LogsLayout({ children, title }) {
-  const navigate = useNavigate()
   const location = useLocation()
   
   return (
@@ -23,18 +23,16 @@ export default function LogsLayout({ children, title }) {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold">{title}</h1>
           <div className="flex gap-2">
-            <Button
-              variant={location.pathname === '/logs/inventory' ? 'default' : 'outline'}
-              onClick={() => navigate('/logs/inventory')}
-            >
-              Inventory Logs
-            </Button>
-            <Button
-              variant={location.pathname === '/logs/system' ? 'default' : 'outline'}
-              onClick={() => navigate('/logs/system')}
-            >
-              System Logs
-            </Button>
+            <Link to="/logs/inventory">
+              <Button variant={location.pathname === '/logs/inventory' ? 'default' : 'outline'}>
+                Inventory Logs
+              </Button>
+            </Link>
+            <Link to="/logs/system">
+              <Button variant={location.pathname === '/logs/system' ? 'default' : 'outline'}>
+                System Logs
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

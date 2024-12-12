@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card.jsx";
 import UserForm from "./user-form";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function UserManagement() {
   return (
@@ -16,12 +17,10 @@ export default function UserManagement() {
           <h1 className="text-2xl font-semibold">Add new User</h1>
           {/* Add Buttons  */}
           <div className="flex gap-2  ">
-            <Button
-              variant="outline"
-              onClick={() => (window.location.href = "/users")}
-            >
-              All Users
-            </Button>
+            <Link to="/users">
+              <Button variant="outline">All Users </Button>
+            </Link>
+
             <Button>Add User</Button>
           </div>
         </div>

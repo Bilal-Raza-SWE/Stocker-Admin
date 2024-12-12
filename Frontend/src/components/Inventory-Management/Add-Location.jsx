@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -63,19 +64,17 @@ export default function AddLocation() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Inventory</h1>
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              onClick={() => (window.location.href = "/inventory")}
-            >
-              Show Inventory
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => (window.location.href = "/inventory/add")}
-            >
-              Add Category
-            </Button>
-            <Button>Add Location</Button>
+            <Link to="/inventory">
+              <Button variant="outline">Show Inventory</Button>
+            </Link>
+
+            <Link to="/inventory/add">
+              <Button variant="outline">Add Category</Button>
+            </Link>
+
+            <Link>
+              <Button>Add Location</Button>
+            </Link>
           </div>
         </div>
       </div>
