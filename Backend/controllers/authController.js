@@ -1,48 +1,64 @@
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// Admin Registration
-const registerAdmin = async (req, res) => {
+
+exports.signup = async (req, res) => {
     const { name, email, password } = req.body;
-
     try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        const user = new User({ name, email, password });
-        await user.save();
-        res.status(201).json({ message: 'User registered successfully' });
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+    //   console.log("Hashed password during signup:", hashedPassword);
+  
+      const newUser = new User({ name, email, password: hashedPassword });
+      console.log("New user during signup:", newUser);
+      await newUser.save();
+  
+      res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+      console.error("Signup error:", error);
+      res.status(500).json({ message: "Server error. Please try again later." });
     }
-};
+  };
+  
 
-// Admin Login
-const loginAdmin = async (req, res) => {
+
+exports.login = async (req, res) => {
     const { email, password } = req.body;
-
+    console.log("Login request body:", req.body);
+  
     try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+    //   console.log("Entered password:", password);
+    //   console.log("Stored hashed password:", user.password);
+  
+      const isPasswordValid = await bcrypt.compare(password.trim(), user.password);
 
-        const isMatch = await user.matchPassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
+    //   console.log("Trimmed password:", password.trim());
 
-        const token = jwt.sign(
-            { userId: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-        res.json({ token });
+
+    //   console.log("Password comparison result:", isPasswordValid);
+  
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+  
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "10s",
+    });
+  
+      res.status(200).json({ token });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Server error. Please try again later." });
     }
-};
-
-module.exports = { registerAdmin, loginAdmin };
+  };
+  
