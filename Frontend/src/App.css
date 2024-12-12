@@ -1,0 +1,37 @@
+/* General styles for responsiveness */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  h1 {
+    font-size: 2rem; /* Adjust heading size for smaller screens */
+  }
+
+  .flex {
+    flex-direction: column; /* Stack elements vertically */
+  }
+}
+
+/* Additional styles for buttons and inputs */
+button {
+  padding: 10px 15px;
+  font-size: 1rem;
+}
+
+input {
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%; /* Make inputs full width */
+}
