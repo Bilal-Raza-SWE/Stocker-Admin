@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Link } from "react-router-dom";
+
 import {
   Select,
   SelectContent,
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InventoryForm from "./InventoryForm";
+import InventoryHeader from "./InventoryHeader";
 
 // Sample users data - replace with your actual data source
 const users = [
@@ -56,30 +58,6 @@ export default function AddLocation() {
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="text-sm text-muted-foreground mb-2">
-          Inventory Management / Show all inventory
-        </div>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Inventory</h1>
-          <div className="flex items-center gap-4">
-            <Link to="/inventory">
-              <Button variant="outline">Show Inventory</Button>
-            </Link>
-
-            <Link to="/inventory/add">
-              <Button variant="outline">Add Category</Button>
-            </Link>
-
-            <Link>
-              <Button>Add Location</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Form */}
       <Card>
         <CardHeader>
           <CardTitle>Warehouse Details</CardTitle>

@@ -10,124 +10,54 @@ import SignUpPage from "./Pages/Authentication/SignUpPage";
 import DashboardPage from "./Pages/DashboardPage";
 import UserManagementPage from "./Pages/User-Management/User-ManagementPage";
 import ShowUsersPage from "./Pages/User-Management/Show-UsersPage";
-import AddInventoryPage from "./Pages/Inventory-Management/Add-InventoryPage";
-import AddLocationPage from "./Pages/Inventory-Management/Add-locationPage";
-import ShowInventoryPage from "./Pages/Inventory-Management/Show-InventoryPage";
-import InventoryLogsPage from "./pages/logs/InventoryLogsPage";
-import SystemLogsPage from "./pages/logs/SystemLogsPage";
+
+
+import InventoryLogsPage from "./Pages/logs/InventoryLogsPage";
+import SystemLogsPage from "./Pages/logs/SystemLogsPage";
 import AnalyticsPage from "./Pages/Analytics Page/AnalyticsPage";
 import Reports from "./Pages/Analytics Page/GenerateReportsPage";
 import Settings from "./Pages/SettingsPage";
 
-function App() {
-  const isAuthenticated = !!localStorage.getItem("token"); // Check if token exists
+import InventoryForm from "./components/Inventory-Management/InventoryForm";
 
+import InventoryList from "./components/Inventory-Management/Show-Inventory";
+import InventoryPage from "./Pages/Inventory-Management/Show-InventoryPage";
+import AddLocation from "./components/Inventory-Management/Add-Location";
+function App() {
   return (
     <Router>
       <Routes>
-        {/* Default Route: Redirect based on authentication */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
-          }
-        />
+        {/* Default Route */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        {/* Login Route */}
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />
-          }
-        />
+        {/* Authentication Routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
 
-        {/* Sign Up Route */}
-        <Route
-          path="/signup"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />
-          }
-        />
-
-        {/* Protected Routes */}
         {/* Dashboard Route */}
-        <Route
-          path="/dashboard"
-          element={
-            isAuthenticated ? <DashboardPage /> : <Navigate to="/login" replace />
-          }
-        />
+        <Route path="/dashboard" element={<DashboardPage />} />
 
-        {/* Users Route */}
-        <Route
-          path="/users"
-          element={
-            isAuthenticated ? <ShowUsersPage /> : <Navigate to="/login" replace />
-          }
-        />
-        {}
-        <Route
-          path="/users/add"
-          element={
-            isAuthenticated ? <UserManagementPage /> : <Navigate to="/login" replace />
-          }
-        />
+        {/* User Management Routes */}
+        <Route path="/users" element={<ShowUsersPage />} />
+        <Route path="/users/add" element={<UserManagementPage />} />
 
-        {/* Inventory Management Route */}
-        <Route
-          path="/inventory"
-          element={
-            isAuthenticated ? <ShowInventoryPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/inventory/add"
-          element={
-            isAuthenticated ? <AddInventoryPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/inventory/location/add"
-          element={
-            isAuthenticated ? <AddLocationPage /> : <Navigate to="/login" replace />
-          }
-        />
+        {/* Inventory Management Routes */}
+        <Route path="/inventory" element={<InventoryPage />}>
+          <Route path="add" element={<InventoryForm />} />
+          <Route path="addLocation" element={<AddLocation />} />
+          <Route index element={<InventoryList />} />
+        </Route>
 
         {/* Logs Routes */}
-        <Route
-          path="/logs/inventory"
-          element={
-            isAuthenticated ? <InventoryLogsPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/logs/system"
-          element={
-            isAuthenticated ? <SystemLogsPage /> : <Navigate to="/login" replace />
-          }
-        />
+        <Route path="/logs/inventory" element={<InventoryLogsPage />} />
+        <Route path="/logs/system" element={<SystemLogsPage />} />
 
-        {/* Analytics Route */}
-        <Route
-          path="/analytics"
-          element={
-            isAuthenticated ? <AnalyticsPage /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route
-          path="/analytics/reports"
-          element={
-            isAuthenticated ? <Reports /> : <Navigate to="/login" replace />
-          }
-        />
+        {/* Analytics Routes */}
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/analytics/reports" element={<Reports />} />
 
         {/* Settings Route */}
-        <Route
-          path="/settings"
-          element={
-            isAuthenticated ? <Settings /> : <Navigate to="/login" replace />
-          }
-        />
+        <Route path="/settings" element={<Settings />} />
 
         {/* Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />

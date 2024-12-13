@@ -53,7 +53,22 @@ const funnelData = [
 
 export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("month");
+  const downloadHTMLPage = () => {
+    // Get the current page's HTML content
+    const pageHTML = document.documentElement.outerHTML;
 
+    // Create a Blob with the HTML content
+    const blob = new Blob([pageHTML], { type: "text/html" });
+
+    // Create a download link
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "report.html"; // The name of the downloaded file
+    link.click();
+
+    // Clean up the object URL
+    URL.revokeObjectURL(link.href);
+  };
   return (
     <div className="p-6 space-y-2">
       <div className="mb-6">
@@ -88,7 +103,7 @@ export default function AnalyticsDashboard() {
               <SelectItem value="year">Last Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={downloadHTMLPage}>
             <Download className="h-4 w-4" />
             Export Report
           </Button>

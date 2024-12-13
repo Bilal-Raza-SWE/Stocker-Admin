@@ -29,27 +29,6 @@ export default function AddInventory() {
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="text-sm text-muted-foreground mb-2">
-          Inventory Management / Show all inventory
-        </div>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Inventory</h1>
-          <div className="flex items-center gap-4">
-            <Link to="/inventory">
-              <Button variant="outline">Show Inventory</Button>
-            </Link>
-
-            <Button>Add Category</Button>
-
-            <Link to="/inventory/location/add">
-              <Button variant="outline">Add Location</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <Tabs defaultValue="categories" className="space-y-6">
         <TabsList>

@@ -11,7 +11,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -19,6 +20,7 @@ function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  // const { logout } = useAuth(); // Access logout from Auth Context
 
   const menuItems = [
     { icon: User, label: "Profile", path: "/users" },
@@ -69,8 +71,8 @@ function Sidebar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear the token from local storage
-    navigate("/login"); // Redirect to the login page
+    localStorage.removeItem("token");
+    navigate('/login');
   };
 
   return (
@@ -95,19 +97,16 @@ function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`
-          fixed top-0 left-0 h-screen bg-background/95 backdrop-blur 
+        className={`fixed top-0 left-0 h-screen bg-background/95 backdrop-blur 
           supports-[backdrop-filter]:bg-background/60 border-r border-border 
-          flex flex-col py-6 transition-all duration-300 ease-in-out 
-          z-50
+          flex flex-col py-6 transition-all duration-300 ease-in-out z-50
           ${
             isMobile
               ? `transform ${
                   isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } w-64`
               : `${isCollapsed ? "w-20" : "w-64"} relative`
-          }
-        `}
+          }`}
       >
         {/* Collapse/Expand Button */}
         {!isMobile && (
@@ -132,8 +131,7 @@ function Sidebar() {
             return (
               <button
                 key={index}
-                className={`
-                  flex items-center gap-4 p-3 rounded-lg 
+                className={`flex items-center gap-4 p-3 rounded-lg 
                   text-foreground/60 hover:text-foreground 
                   transition-all duration-200 ease-in-out 
                   ${
@@ -141,8 +139,7 @@ function Sidebar() {
                       ? "bg-accent text-foreground"
                       : "hover:bg-accent/50"
                   }
-                  ${isMobile || isCollapsed ? "justify-center" : ""}
-                `}
+                  ${isMobile || isCollapsed ? "justify-center" : ""}`}
                 onClick={() => handleNavigation(item.path)}
               >
                 <item.icon
@@ -165,19 +162,16 @@ function Sidebar() {
         </nav>
 
         {/* Logout Button */}
-        <Link to={handleLogout}>
-          <button
-            className={`
-            flex items-center gap-4 p-3 mx-4 rounded-lg 
+        <button
+          onClick={handleLogout} // Use handleLogout function
+          className={`flex items-center gap-4 p-3 mx-4 rounded-lg 
             text-foreground/60 hover:text-foreground 
             hover:bg-accent/50 transition-all duration-200 ease-in-out absolute bottom-5  
-            ${isMobile || isCollapsed ? "justify-center" : ""}
-          `}
-          >
-            <LogOut className="w-6 h-6" />
-            {!(isMobile || isCollapsed) && <span>Logout</span>}
-          </button>
-        </Link>
+            ${isMobile || isCollapsed ? "justify-center" : ""}`}
+        >
+          <LogOut className="w-6 h-6" />
+          {!(isMobile || isCollapsed) && <span>Logout</span>}
+        </button>
       </aside>
     </>
   );

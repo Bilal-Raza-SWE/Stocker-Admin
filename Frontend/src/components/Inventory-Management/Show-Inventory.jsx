@@ -1,10 +1,8 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -20,24 +18,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Sample data - replace with your actual data source
-const inventoryItems = [
-  {
-    id: 1,
-    name: "Monitor",
-    quantity: 25,
-    price: 249.99,
-    category: "Electronics",
-    supplier: "ScreenTech Corp.",
-    lastRestocked: "2024-11-30",
-  },
-  // Add more items as needed
-];
-
 export default function InventoryList() {
+  const [inventoryItems, setInventoryItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [refreshData, setRefreshData] = useState(false); // State variable to trigger data re-fetch
   const itemsPerPage = 10;
+  const navigate = useNavigate();
+
+  // Fetch inventory items from backend
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/inventory`) // Replace with your backend endpoint
+      .then((response) => response.json())
+      .then((data) => {
+        setInventoryItems(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching inventory:", error);
+        setLoading(false);
+      });
+  }, [refreshData]); // Re-fetch data when refreshData changes
+
+  const handleDelete = (itemId) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/inventory/${itemId}`, { method: "DELETE" })
+        .then((response) => {
+          if (response.ok) {
+            setRefreshData((prev) => !prev); // Toggle refreshData to trigger useEffect
+          } else {
+            console.error("Failed to delete item.");
+          }
+        })
+        .catch((error) => console.error("Error deleting item:", error));
+    }
+  };
+
+  const handleUpdate = (itemId) => {
+    navigate(`/inventory/add?itemId=${itemId}`);
+  };
 
   const filteredItems = inventoryItems.filter((item) =>
     Object.values(item).some((value) =>
@@ -47,35 +68,24 @@ export default function InventoryList() {
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const currentItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  if (loading) {
+    return <div>Loading...</div>; // Add a better loading indicator if needed
+  }
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="text-sm text-muted-foreground mb-2">
-          Inventory Management / Show all inventory
-        </div>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Inventory</h1>
-          <div className="flex items-center gap-4">
-            <div className="relative w-64">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search inventory..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Button>Show Inventory</Button>
-            <Link to="/inventory/add">
-              <Button variant="outline">Add Category</Button>
-            </Link>
-            <Link to="/inventory/location/add">
-              <Button variant="outline">Add Location</Button>
-            </Link>
-          </div>
-        </div>
+      {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          placeholder="Search items..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
       {/* Inventory Table */}
@@ -94,16 +104,20 @@ export default function InventoryList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredItems.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>${item.price.toFixed(2)}</TableCell>
+            {currentItems.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell className="font-medium">{item._id}</TableCell>
+                <TableCell>{item.productName}</TableCell>
+                <TableCell>{item.quantityInStock}</TableCell>
+                <TableCell>
+                  ${item.pricePerUnit ? item.pricePerUnit.toFixed(2) : "N/A"}
+                </TableCell>
                 <TableCell>{item.category}</TableCell>
                 <TableCell>{item.supplier}</TableCell>
                 <TableCell>
-                  {new Date(item.lastRestocked).toLocaleDateString()}
+                  {item.dateAdded
+                    ? new Date(item.dateAdded).toLocaleDateString()
+                    : "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -113,14 +127,12 @@ export default function InventoryList() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => console.log("Update", item.id)}
-                      >
+                      <DropdownMenuItem onClick={() => handleUpdate(item._id)}>
                         Update
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-600"
-                        onClick={() => console.log("Delete", item.id)}
+                        onClick={() => handleDelete(item._id)}
                       >
                         Delete
                       </DropdownMenuItem>

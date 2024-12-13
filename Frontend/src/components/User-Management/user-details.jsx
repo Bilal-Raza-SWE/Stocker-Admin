@@ -1,10 +1,9 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,33 +12,71 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-// Sample data - replace with your actual data source
-const users = [
-  {
-    id: 1,
-    name: "Bilal Raza",
-    email: "bilal1223@gmail.com",
-    role: "owner",
-    status: "Active",
-    lastLogin: "12/1/024",
-    avatar: "/public/IMG-20230402-WA0037.jpg",
-  },
-  // Add more users as needed
-];
-
 export default function UserDetails() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]); // Initialize as an empty array
+  const navigate = useNavigate();
   const itemsPerPage = 10;
+
+  // Fetch user data from the backend
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        console.log(data);
+        setUsers(data); // Set the fetched users to the state
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter((user) =>
     Object.values(user).some((value) =>
-      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  if (users.length === 0) {
+    return <div className="p-6 max-w-[1200px] mx-auto">Loading users...</div>;
+  }
+const handleUpdate = (id) => {
+  navigate(`/users/add?userId=${id}`);
+}
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      alert("Failed to delete user: " + error.message);
+      return;
+    }
+
+    // Remove user from the state (UI) without re-fetching
+    setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+    alert("User deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    alert("An error occurred while deleting the user.");
+  }
+};
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
@@ -65,8 +102,8 @@ export default function UserDetails() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </span>
-            {/* Add Buttons  */}
-            <div className="flex gap-2  ">
+            {/* Add Buttons */}
+            <div className="flex gap-2">
               <Button>All Users</Button>
 
               <Link to="/users/add">
@@ -78,16 +115,16 @@ export default function UserDetails() {
           <div className="space-y-4">
             {filteredUsers.map((user) => (
               <div
-                key={user.id}
+                key={user._id}
                 className="flex items-center justify-between py-4 hover:bg-accent/50 rounded-lg px-4 transition-colors"
               >
                 <div className="flex items-center space-x-4 flex-1">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={user.avatar || ""} alt={user.name} />
+                    <AvatarFallback>{user.firstName?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="w-12">{user.id}</div>
-                  <div className="flex-1">{user.name}</div>
+                  <div className="flex-1">{user.firstName}</div>
                   <div className="flex-1">{user.email}</div>
                   <div className="w-24">{user.role}</div>
                   <div className="w-24">
@@ -110,8 +147,8 @@ export default function UserDetails() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Update</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem onClick={()=>handleUpdate(user._id)}>Update</DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-600"  onClick={() => handleDelete(user._id)} >
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
