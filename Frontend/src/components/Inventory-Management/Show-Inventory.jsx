@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -79,14 +79,16 @@ export default function InventoryList() {
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
-      {/* Search Input */}
-      <div className="mb-4">
-        <Input
-          placeholder="Search items..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
+      {/* Add SearchBar */}
+      <div className="relative w-64 left-1/2 ml-24 mb-5">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
 
       {/* Inventory Table */}
       <div className="border rounded-lg">

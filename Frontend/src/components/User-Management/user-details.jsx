@@ -10,6 +10,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function UserDetails() {
@@ -23,7 +31,9 @@ export default function UserDetails() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`);
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/users`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
@@ -50,33 +60,38 @@ export default function UserDetails() {
   if (users.length === 0) {
     return <div className="p-6 max-w-[1200px] mx-auto">Loading users...</div>;
   }
-const handleUpdate = (id) => {
-  navigate(`/users/add?userId=${id}`);
-}
-const handleDelete = async (id) => {
-  const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-  
-  if (!confirmDelete) return;
+  const handleUpdate = (id) => {
+    navigate(`/users/add?userId=${id}`);
+  };
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
 
-  try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/${id}`, {
-      method: "DELETE",
-    });
+    if (!confirmDelete) return;
 
-    if (!response.ok) {
-      const error = await response.json();
-      alert("Failed to delete user: " + error.message);
-      return;
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert("Failed to delete user: " + error.message);
+        return;
+      }
+
+      // Remove user from the state (UI) without re-fetching
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+      alert("User deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("An error occurred while deleting the user.");
     }
-
-    // Remove user from the state (UI) without re-fetching
-    setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-    alert("User deleted successfully!");
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    alert("An error occurred while deleting the user.");
-  }
-};
+  };
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">
@@ -112,22 +127,35 @@ const handleDelete = async (id) => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {filteredUsers.map((user) => (
-              <div
-                key={user._id}
-                className="flex items-center justify-between py-4 hover:bg-accent/50 rounded-lg px-4 transition-colors"
-              >
-                <div className="flex items-center space-x-4 flex-1">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar || ""} alt={user.name} />
-                    <AvatarFallback>{user.firstName?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="w-12">{user.id}</div>
-                  <div className="flex-1">{user.firstName}</div>
-                  <div className="flex-1">{user.email}</div>
-                  <div className="w-24">{user.role}</div>
-                  <div className="w-24">
+          <Table className = "mt-5">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Avatar</TableHead>
+                <TableHead className="w-[100px]">User ID</TableHead>
+                <TableHead>First Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                {/* <TableHead>Last Login</TableHead> */}
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell>
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user.avatar || ""} alt={user.name} />
+                      <AvatarFallback>
+                        {user.firstName?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell className="font-medium">{user.id}</TableCell>
+                  <TableCell>{user.firstName}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
                         user.status === "Active"
@@ -137,25 +165,34 @@ const handleDelete = async (id) => {
                     >
                       {user.status}
                     </span>
-                  </div>
-                  <div className="w-24">{user.lastLogin}</div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={()=>handleUpdate(user._id)}>Update</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600"  onClick={() => handleDelete(user._id)} >
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ))}
-          </div>
+                  </TableCell>
+                  {/* <TableCell>{user.lastLogin}</TableCell> */}
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => handleUpdate(user._id)}
+                        >
+                          Update
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleDelete(user._id)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
         {/* Pagination */}

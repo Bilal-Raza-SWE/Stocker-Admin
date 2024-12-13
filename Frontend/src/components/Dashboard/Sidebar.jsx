@@ -97,9 +97,9 @@ function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-background/95 backdrop-blur 
+        className={`fixed top-0 left-0 h-auto bg-background/95 backdrop-blur 
           supports-[backdrop-filter]:bg-background/60 border-r border-border 
-          flex flex-col py-6 transition-all duration-300 ease-in-out z-50
+          flex flex-col py-6 transition-all duration-300 ease-in-out z-50 
           ${
             isMobile
               ? `transform ${

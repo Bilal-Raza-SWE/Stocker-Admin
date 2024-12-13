@@ -10,6 +10,17 @@ import { Shield, Plug2, Upload } from 'lucide-react'
 export default function SettingsPage() {
   const [profileImage, setProfileImage] = useState('/public')
   
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
@@ -44,11 +55,20 @@ export default function SettingsPage() {
                     className="h-20 w-20 rounded-full border-dashed border-2 object-cover"
                   />
                   <div className="space-y-2">
-                    <Button variant="outline" size="sm" onClick={() => setProfileImage('/new-image.svg')}>
+                    <Button variant="outline" size="sm" onClick={() => document.getElementById('imageUpload').click()}>
                       <Upload className="mr-2 h-4 w-4" />
                       Upload new picture
                     </Button>
-                    <Button variant="ghost" size="sm">Delete</Button>
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleImageUpload}
+                    />
+                    <Button variant="ghost" size="sm" onClick={() => setProfileImage('/public')}>
+                      Delete
+                    </Button>
                   </div>
                 </div>
 
