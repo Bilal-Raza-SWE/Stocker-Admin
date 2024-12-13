@@ -1,52 +1,65 @@
-const InventoryItem = require('../models/InventoryItem');
+// controllers/inventoryController.js
+const InventoryItem = require("../models/InventoryItem");
+
+// Create a new inventory item
+exports.createItem = async (req, res) => {
+  try {
+    const item = new InventoryItem(req.body);
+    await item.save();
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 // Get all inventory items
-exports.getInventoryItems = async (req, res) => {
+exports.getAllItems = async (req, res) => {
   try {
     const items = await InventoryItem.find();
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching inventory items' });
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
-// Add a new inventory item
-exports.addInventoryItem = async (req, res) => {
-  const { name, description, quantity, price } = req.body;
+// Get an inventory item by ID
+exports.getItemById = async (req, res) => {
   try {
-    const newItem = new InventoryItem({ name, description, quantity, price });
-    await newItem.save();
-    res.status(201).json(newItem);
-  } catch (err) {
-    res.status(500).json({ message: 'Error adding inventory item' });
-  }
-};
-
-// Edit an inventory item
-exports.editInventoryItem = async (req, res) => {
-  const { id } = req.params;
-  const { name, description, quantity, price } = req.body;
-  try {
-    const updatedItem = await InventoryItem.findByIdAndUpdate(id, { name, description, quantity, price }, { new: true });
-    if (!updatedItem) {
-      return res.status(404).json({ message: 'Item not found' });
+    const item = await InventoryItem.findById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
     }
-    res.json(updatedItem);
-  } catch (err) {
-    res.status(500).json({ message: 'Error editing inventory item' });
+    res.status(200).json(item);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Update an inventory item
+exports.updateItem = async (req, res) => {
+  try {
+    const item = await InventoryItem.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    res.status(200).json(item);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
 // Delete an inventory item
-exports.deleteInventoryItem = async (req, res) => {
-  const { id } = req.params;
+exports.deleteItem = async (req, res) => {
   try {
-    const deletedItem = await InventoryItem.findByIdAndDelete(id);
-    if (!deletedItem) {
-      return res.status(404).json({ message: 'Item not found' });
+    const item = await InventoryItem.findByIdAndDelete(req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: "Item not found" });
     }
-    res.json({ message: 'Item deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error deleting inventory item' });
+    res.status(204).send();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };

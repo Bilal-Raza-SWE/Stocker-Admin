@@ -2,9 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-
+const userRoutes = require('./routes/userRoutes');
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const inventoryRoutes=require("./routes/inventoryRoutes");
 // const inventoryRoutes = require("./routes/inventoryRoutes");
 // const authMiddleware = require("./middleware/authMiddleware");
 
@@ -23,6 +24,8 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use(userRoutes)
+app.use("/inventory", inventoryRoutes)
 // app.use("/api/inventory", inventoryRoutes);
 
 

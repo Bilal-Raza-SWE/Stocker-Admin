@@ -1,26 +1,36 @@
-const mongoose = require('mongoose');
+// models/InventoryItem.js
+const mongoose = require("mongoose");
 
-const inventoryItemSchema = new mongoose.Schema({
-  name: {
+const InventoryItemSchema = new mongoose.Schema({
+  productId: {
+    type: String,
+    required: true,
+  },
+  productName: {
+    type: String,
+    required: true,
+  },
+  quantityInStock: {
+    type: Number,
+    required: true,
+  },
+  pricePerUnit: {
+    type: Number,
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ["Electronics", "Furniture", "Clothing", "Toys", "Books"],
+  },
+  supplier:{
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
-  },
-  quantity: {
-    type: Number,
-    required: true
-  },
-  price: {
-    type: Number,
-    required: true
-  },
-  createdAt: {
+  dateAdded: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('InventoryItem', inventoryItemSchema);
+module.exports = mongoose.model("InventoryItem", InventoryItemSchema);
